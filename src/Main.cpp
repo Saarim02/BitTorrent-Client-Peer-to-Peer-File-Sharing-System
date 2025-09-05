@@ -138,19 +138,26 @@ json decode_bencoded_value(const string& encoded_value) {
     return decode_bencoded_value(encoded_value, idx);
 }
 
-vector<char> read_from_file(const string& file_path){
-    if(!fs::exists(file_path)) { throw runtime_error("File don't exist: " + file_path); }
-    //get filesize
-    size_t size = fs::file_size(file_path);
-    
-    // Open the file in binary mode using std::ifstream
-    ifstream file(file_path, ios::binary);
-    if (!file) { throw runtime_error("Error opening file: " + file_path); }
+vector<char> read_from_file(const std::string& file_path) {
+    // Open the file in binary mode
+    std::ifstream file(file_path, std::ios::binary);
+    if (!file) {
+        throw std::runtime_error("File doesn't exist: " + file_path);
+    }
 
-    //Create buffer vector to store the file contents
-    vector<char> buffer (size);
-    //read the file
-    if (!file.read(buffer.data(), size)) { throw runtime_error("Error reading file: " + file_path); }
+    // Get file size
+    file.seekg(0, std::ios::end);
+    size_t size = file.tellg();
+    file.seekg(0, std::ios::beg);
+
+    // Create buffer vector to store the file contents
+    vector<char> buffer(size);
+
+    // Read the file
+    if (!file.read(buffer.data(), size)) {
+        throw std::runtime_error("Error reading file: " + file_path);
+    }
+
     return buffer;
 }
 
